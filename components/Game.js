@@ -90,7 +90,7 @@ class Game {
   }
 
   validateInput(move) {
-    let singleDigit = /[0-9]/;
+    let singleDigit = /^(?:[0-8])$/;
     if (!singleDigit.test(move.toString())) {
       return false;
     } else {
