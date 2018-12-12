@@ -1,4 +1,6 @@
 const inquirer = require("inquirer");
+const clear = require("clear");
+
 const Player = require("./Player");
 class Game {
   constructor() {
@@ -10,7 +12,8 @@ class Game {
     this.isPlaying = true;
     this.result = null;
     this.currentPlayer = 1;
-    this.winCombinations = [
+    this.moveCount = 0;
+    this.winCombos = [
       [0, 1, 2],
       [3, 4, 5],
       [6, 7, 8],
@@ -32,34 +35,92 @@ class Game {
   }
 
   endGame() {
-    console.log("validating moves");
+    clear();
+    this.printBoard();
+    if (this.result === "DRAW") {
+      console.log("The game was drawn");
+    } else if (this.result === "WIN") {
+      const winner =
+        this.currentPlayer === 2 ? this.playerOne.name : this.playerTwo.name;
+      console.log(`${winner} won the game!`);
+    }
   }
 
   async startGameLoop() {
+    clear();
     this.clearBoard();
     while (this.isPlaying) {
       this.printBoard();
       const nextPlayerName =
         this.currentPlayer === 1 ? this.playerOne.name : this.playerTwo.name;
-      const nextMove = await this.getPlayerMove(nextPlayerName);
-      this.placePiece(nextMove);
-      this.togglePlayer();
-      // add correct token to board by player
-      // check for victories or draws
+
+      await this.makeMove(nextPlayerName);
+      this.validateBoard();
     }
     this.endGame();
   }
 
-  validateMoves() {
-    console.log("validating moves");
+  async makeMove(nextPlayerName) {
+    const nextMove = await this.getPlayerMove(nextPlayerName);
+
+    const isValidInput = this.validateInput(nextMove);
+    let isValidMove = false;
+
+    if (isValidInput) {
+      isValidMove = this.validateMove(nextMove);
+    }
+
+    if (isValidInput && isValidMove) {
+      this.placePiece(nextMove);
+      this.togglePlayer();
+    } else {
+      console.log("\n" + "Invalid move - please pick again!");
+    }
+  }
+
+  validateMove(move) {
+    if (
+      this.board[move] === this.playerOneToken ||
+      this.board[move] === this.playerTwoToken
+    ) {
+      return false;
+    } else {
+      return true;
+    }
+  }
+
+  validateInput(move) {
+    let singleDigit = /[0-9]/;
+    if (!singleDigit.test(move.toString())) {
+      return false;
+    } else {
+      return true;
+    }
+  }
+
+  validateBoard() {
+    for (let i = 0; i < this.winCombos.length; i++) {
+      if (
+        this.board[this.winCombos[i][0]] === this.board[this.winCombos[i][1]] &&
+        this.board[this.winCombos[i][1]] === this.board[this.winCombos[i][2]]
+      ) {
+        this.handleWin();
+        return;
+      }
+    }
+    if (this.moveCount === 9) {
+      this.handleDraw();
+    }
   }
 
   handleWin() {
-    console.log("handling a win");
+    this.isPlaying = false;
+    this.result = "WIN";
   }
 
   handleDraw() {
-    console.log("handling a draw");
+    this.isPlaying = false;
+    this.result = "DRAW";
   }
 
   togglePlayer() {
@@ -69,6 +130,7 @@ class Game {
   placePiece(location) {
     this.board[location] =
       this.currentPlayer === 1 ? this.playerOneToken : this.playerTwoToken;
+    this.moveCount += 1;
   }
 
   getPlayerName(playerName) {
@@ -81,7 +143,7 @@ class Game {
 
   getPlayerMove(playerName) {
     return inquirer
-      .prompt([{ name: "move", message: `Your move, ${playerName}!` }])
+      .prompt([{ name: "move", message: `Your move, ${playerName}...` }])
       .then(answers => {
         return answers.move;
       });
