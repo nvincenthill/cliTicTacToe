@@ -5,7 +5,7 @@ class Game {
     this.playerOne = null;
     this.playerTwo = null;
     this.board = ["T", "I", "C", "T", "A", "C", "T", "O", "E"];
-    this.isFinished = false;
+    this.isPlaying = true;
     this.result = null;
     this.nextPlayer = 1;
   }
@@ -20,7 +20,8 @@ class Game {
   }
 
   async startGameLoop() {
-    while (!this.isFinished) {
+    this.clearBoard();
+    while (this.isPlaying) {
       this.printBoard();
       const nextPlayerName =
         this.nextPlayer === 1 ? this.playerOne.name : this.playerTwo.name;
@@ -52,6 +53,12 @@ class Game {
         `-----|-----|------\n` +
         `  ${this.board[6]}  |  ${this.board[7]}  |  ${this.board[8]}  \n`
     );
+  }
+
+  clearBoard() {
+    for (let i = 0; i < this.board.length; i++) {
+      this.board[i] = i;
+    }
   }
 }
 
