@@ -26,7 +26,7 @@ class Game {
   }
 
   async startGame() {
-    this.printBoard();
+    this.displayGreeting();
     const playerOneName = await this.getPlayerName("Player One");
     this.playerOne = new Player(playerOneName);
     const playerTwoName = await this.getPlayerName("Player Two");
@@ -38,11 +38,11 @@ class Game {
     clear();
     this.printBoard();
     if (this.result === "DRAW") {
-      console.log("The game was drawn");
+      console.log("\x1b[33m%s\x1b[0m", "The game was drawn" + "\n");
     } else if (this.result === "WIN") {
       const winner =
         this.currentPlayer === 2 ? this.playerOne.name : this.playerTwo.name;
-      console.log(`${winner} won the game!`);
+      console.log("\x1b[32m%s\x1b[0m", `${winner} won the game!` + "\n");
     }
   }
 
@@ -74,7 +74,10 @@ class Game {
       this.placePiece(nextMove);
       this.togglePlayer();
     } else {
-      console.log("\n" + "Invalid move - please pick again!");
+      console.log(
+        "\x1b[41m%s\x1b[0m",
+        "\n" + "Invalid move - please pick again!"
+      );
     }
   }
 
@@ -148,6 +151,13 @@ class Game {
       .then(answers => {
         return answers.move;
       });
+  }
+
+  displayGreeting() {
+    clear();
+    this.printBoard();
+    console.log("Nicholas Vincent-Hill");
+    console.log("\x1b[32m%s\x1b[0m", "www.nickvh.tech" + "\n");
   }
 
   printBoard() {
