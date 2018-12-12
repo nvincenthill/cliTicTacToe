@@ -131,6 +131,7 @@ class Game {
     this.board[location] =
       this.currentPlayer === 1 ? this.playerOneToken : this.playerTwoToken;
     this.moveCount += 1;
+    clear();
   }
 
   getPlayerName(playerName) {
