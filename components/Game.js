@@ -8,7 +8,7 @@ class Game {
   }
 
   startGame() {
-    console.log("Starting a new game");
+    let playerOne = new Player();
   }
 
   getPlayerName() {
@@ -20,4 +20,4 @@ class Game {
   }
 }
 
-export default Game;
+module.exports = Game;
