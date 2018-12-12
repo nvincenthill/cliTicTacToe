@@ -1,9 +1,9 @@
 const program = require("commander");
-const Game = require("./game");
+const Game = require("./components/Game");
 
 program.version("1.0.0").parse(process.argv);
 
-console.log("Starting Tic-Tac-Toe...");
+console.log("CLI Tic-Tac-Toe by Nicholas Vincent-Hill - www.nickvh.tech");
 
 let newGame = new Game();
 newGame.startGame();
